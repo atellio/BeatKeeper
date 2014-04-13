@@ -31,34 +31,45 @@ public class MetronomeActivity extends Activity {
 	private short bpm = 100;
 	private short noteValue = 4;
 	private short beats = 4;
-	private short volume;
+	// private short volume;
 	private short initialVolume;
 	private double beatSound = 2440;
 	private double sound = 6440;
+	private boolean isStopped = true;
 	private AudioManager audio;
     private MetronomeAsyncTask metroTask;
     
     private Button plusButton;
     private Button minusButton;
+    private Button startStop;
     private TextView currentBeat;
     
     private Handler mHandler;
     
     // have in mind that: http://stackoverflow.com/questions/11407943/this-handler-class-should-be-static-or-leaks-might-occur-incominghandler
     // in this case we should be fine as no delayed messages are queued
-    private Handler getHandler() {
-    	return new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-            	String message = (String)msg.obj;
-            	if(message.equals("1"))
-            		currentBeat.setTextColor(Color.GREEN);
-            	else
-            		currentBeat.setTextColor(getResources().getColor(R.color.yellow));
-            	currentBeat.setText(message);
-            }
-        };
-    }
+	private Handler getHandler() {
+		return new Handler() {
+			@Override
+			public void handleMessage(Message msg) {
+				String message = (String) msg.obj;
+				if (!isStopped) {
+					if (message.equals("1")) {
+						currentBeat.setTextColor(Color.RED);
+						startStop.setTextColor(Color.RED);
+					} else {
+						currentBeat.setTextColor(getResources().getColor(
+								R.color.black));
+						startStop.setTextColor(getResources().getColor(
+								R.color.black));
+					}
+					currentBeat.setText(message);
+					startStop.setText(message);
+				}
+			}
+		};
+
+	}
 	
     /** Called when the activity is first created. */
     @Override
@@ -81,7 +92,9 @@ public class MetronomeActivity extends Activity {
         minusButton.setOnLongClickListener(minusListener);
         
         currentBeat = (TextView) findViewById(R.id.currentBeat);
-        currentBeat.setTextColor(Color.GREEN);
+        currentBeat.setTextColor(Color.RED);
+        
+        startStop = (Button) findViewById(R.id.startstop);
         
         Spinner beatSpinner = (Spinner) findViewById(R.id.beatspinner);
         ArrayAdapter<Beats> arrayBeats =
@@ -103,29 +116,26 @@ public class MetronomeActivity extends Activity {
         audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         
     	initialVolume = (short) audio.getStreamVolume(AudioManager.STREAM_MUSIC);
-        volume = initialVolume;
+        // volume = initialVolume;
         
-        SeekBar volumebar = (SeekBar) findViewById(R.id.volumebar);
-        volumebar.setMax(audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
-        volumebar.setProgress(volume);
-        volumebar.setOnSeekBarChangeListener(volumeListener);
     }
     
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public synchronized void onStartStopClick(View view) {
-    	Button button = (Button) view;
-    	String buttonText = button.getText().toString();
+    	String buttonText = startStop.getText().toString();
     	if(buttonText.equalsIgnoreCase("start")) {
-    		button.setText(R.string.stop);
+    		// startStop.setText(R.string.stop);
+    		isStopped = false;
     		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
     			metroTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[])null);
     		else
     			metroTask.execute();    		
     	} else {
-    		button.setText(R.string.start);    	
     		metroTask.stop();
     		metroTask = new MetronomeAsyncTask();
     		Runtime.getRuntime().gc();
+    		startStop.setText(R.string.start); 
+    		startStop.setTextColor(Color.BLACK);
     	}
     }
     
@@ -197,6 +207,7 @@ public class MetronomeActivity extends Activity {
     	
     };
     
+    /*
     private OnSeekBarChangeListener volumeListener = new OnSeekBarChangeListener() {
 
 		@Override
@@ -219,6 +230,8 @@ public class MetronomeActivity extends Activity {
 		}   	
     	
     };
+    */
+    
     
     private OnItemSelectedListener beatsSpinnerListener = new OnItemSelectedListener() {
 
@@ -262,19 +275,19 @@ public class MetronomeActivity extends Activity {
     	
     };
 
-    @Override
-    public boolean onKeyUp(int keycode, KeyEvent e) {
-    	SeekBar volumebar = (SeekBar) findViewById(R.id.volumebar);
-    	volume = (short) audio.getStreamVolume(AudioManager.STREAM_MUSIC);
-        switch(keycode) {
-            case KeyEvent.KEYCODE_VOLUME_UP:
-            case KeyEvent.KEYCODE_VOLUME_DOWN: 
-                volumebar.setProgress(volume);
-            	break;                
-        }
+  //  @Override
+   // public boolean onKeyUp(int keycode, KeyEvent e) {
+    	//SeekBar volumebar = (SeekBar) findViewById(R.id.volumebar);
+    	//volume = (short) audio.getStreamVolume(AudioManager.STREAM_MUSIC);
+        //switch(keycode) {
+        //    case KeyEvent.KEYCODE_VOLUME_UP:
+        //    case KeyEvent.KEYCODE_VOLUME_DOWN: 
+        //        volumebar.setProgress(volume);
+       //     	break;                
+    //    }
 
-        return super.onKeyUp(keycode, e);
-    }
+     //   return super.onKeyUp(keycode, e);
+ //   }
     
     public void onBackPressed() {
     	metroTask.stop();
@@ -306,6 +319,9 @@ public class MetronomeActivity extends Activity {
 		
 		public void stop() {
 			metronome.stop();
+			startStop.setText(R.string.start); 
+    		startStop.setTextColor(Color.BLACK);
+    		isStopped = true;
 			metronome = null;
 		}
 		
