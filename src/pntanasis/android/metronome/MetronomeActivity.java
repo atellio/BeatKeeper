@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnLongClickListener;
@@ -226,9 +227,12 @@ public class MetronomeActivity extends Activity {
 				long arg3) {
 			// TODO Auto-generated method stub
 			Beats beat = (Beats) arg0.getItemAtPosition(arg2);
+			Log.d("beat value", beat.toString()); // logging beat numerator 
 			TextView timeSignature = (TextView) findViewById(R.id.timesignature);
 			timeSignature.setText(""+beat+"/"+noteValue);
 			metroTask.setBeat(beat.getNum());
+			beats = beat.getNum();
+			Log.d("metroTask beat", String.valueOf(beat.getNum()));
 		}
 
 		@Override
@@ -310,7 +314,7 @@ public class MetronomeActivity extends Activity {
 			metronome.calcSilence();
 		}
 		
-		public void setBeat(short beat) {
+		public void setBeat(int beat) {
 			if(metronome != null)
 				metronome.setBeat(beat);
 		}
