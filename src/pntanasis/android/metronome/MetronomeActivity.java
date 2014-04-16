@@ -57,6 +57,7 @@ public class MetronomeActivity extends Activity {
 					if (message.equals("1")) {
 						currentBeat.setTextColor(Color.RED);
 						startStop.setTextColor(Color.RED);
+						Log.d("message beat", String.valueOf(message));
 					} else {
 						currentBeat.setTextColor(getResources().getColor(
 								R.color.black));
