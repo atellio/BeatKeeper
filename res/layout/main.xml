@@ -109,14 +109,23 @@
 
     </LinearLayout>
 
-
-    <Button
-        android:id="@+id/startstop"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:onClick="onStartStopClick"
-        android:text="@string/start"
-        android:background="@android:color/transparent"
-        android:textSize="80dp" />
+        android:layout_height="match_parent" >
 
+        <de.passsy.holocircularprogressbar.HoloCircularProgressBar
+            android:id="@+id/holoCircularProgressBar1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/startstop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:onClick="onStartStopClick"
+            android:text="@string/start"
+            android:textSize="80dp" />
+
+    </FrameLayout>
 </LinearLayout>
