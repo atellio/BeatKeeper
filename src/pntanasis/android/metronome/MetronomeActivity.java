@@ -24,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
@@ -49,6 +50,7 @@ public class MetronomeActivity extends Activity {
     private Button minusButton;
     private Button startStop;
     private TextView currentBeat;
+    
     private HoloCircularProgressBar holoCircularProgressBar;
     private ObjectAnimator progressBarAnimator;
     protected boolean animationhasEnded = false;
@@ -76,7 +78,6 @@ public class MetronomeActivity extends Activity {
 					currentBeat.setText(message);
 					startStop.setText(message);
 					
-					animateAdapter();
 				}
 			}
 		};
@@ -153,8 +154,10 @@ public class MetronomeActivity extends Activity {
     		startStop.setText(R.string.start); 
     		startStop.setTextColor(Color.BLACK);
     		
-    		animationhasEnded = true;
-			progressBarAnimator.cancel();
+    		
+    		startAnimation();
+    		holoCircularProgressBar.setProgress(0);
+    		
     	}
     }
     
@@ -268,20 +271,6 @@ public class MetronomeActivity extends Activity {
 		}
     	
     };
-
-  //  @Override
-   // public boolean onKeyUp(int keycode, KeyEvent e) {
-    	//SeekBar volumebar = (SeekBar) findViewById(R.id.volumebar);
-    	//volume = (short) audio.getStreamVolume(AudioManager.STREAM_MUSIC);
-        //switch(keycode) {
-        //    case KeyEvent.KEYCODE_VOLUME_UP:
-        //    case KeyEvent.KEYCODE_VOLUME_DOWN: 
-        //        volumebar.setProgress(volume);
-       //     	break;                
-    //    }
-
-     //   return super.onKeyUp(keycode, e);
- //   }
     
     public void onBackPressed() {
     	metroTask.stop();
@@ -338,7 +327,7 @@ public class MetronomeActivity extends Activity {
 
     private void animate(final HoloCircularProgressBar progressBar, final AnimatorListener listener) {
 		final float progress = calculateBarProgress();
-		int duration = beats;
+		int duration = 300;
 		animate(progressBar, progress, duration, listener);
 	}
     
@@ -401,61 +390,40 @@ public class MetronomeActivity extends Activity {
     	return barProgress;
     }
     
-    private void animateAdapter() {
-    	animate(holoCircularProgressBar, calculateBarProgress(), beats, new AnimatorListener() {
 
-			@Override
-			public void onAnimationCancel(final Animator animation) {
-				animation.end();
-			}
+	private void startAnimation() {
 
-			@Override
-			public void onAnimationEnd(final Animator animation) {
-				if (!animationhasEnded) {
-					animate(holoCircularProgressBar, this);
-				} else {
-					animationhasEnded = false;
+		if (!isStopped) {
+			animate(holoCircularProgressBar, new AnimatorListener() {
+
+				@Override
+				public void onAnimationCancel(final Animator animation) {
+					animation.end();
 				}
-			}
 
-			@Override
-			public void onAnimationRepeat(final Animator animation) {
-			}
-
-			@Override
-			public void onAnimationStart(final Animator animation) {
-			}
-		});
-    	
-    	
-    }
-    
-    private void startAnimation() {
-    	animate(holoCircularProgressBar, new AnimatorListener() {
-
-			@Override
-			public void onAnimationCancel(final Animator animation) {
-				animation.end();
-			}
-
-			@Override
-			public void onAnimationEnd(final Animator animation) {
-				if (!animationhasEnded) {
-					animate(holoCircularProgressBar, this);
-				} else {
-					animationhasEnded = false;
+				@Override
+				public void onAnimationEnd(final Animator animation) {
+					if (!animationhasEnded) {
+						animate(holoCircularProgressBar, this);
+					} else {
+						animationhasEnded = false;
+					}
 				}
-			}
 
-			@Override
-			public void onAnimationRepeat(final Animator animation) {
-			}
+				@Override
+				public void onAnimationRepeat(final Animator animation) {
+				}
 
-			@Override
-			public void onAnimationStart(final Animator animation) {
-			}
-		});
-    }
+				@Override
+				public void onAnimationStart(final Animator animation) {
+				}
+
+			});
+		} else {
+			animationhasEnded = true;
+			progressBarAnimator.cancel();
+		}
+	}
     
     
 }
