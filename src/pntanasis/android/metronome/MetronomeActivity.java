@@ -53,7 +53,7 @@ public class MetronomeActivity extends Activity {
     
     private HoloCircularProgressBar holoCircularProgressBar;
     private ObjectAnimator progressBarAnimator;
-    protected boolean animationhasEnded = false;
+    protected boolean animationHasEnded = false;
     
     private Handler mHandler;
     
@@ -154,9 +154,14 @@ public class MetronomeActivity extends Activity {
     		startStop.setText(R.string.start); 
     		startStop.setTextColor(Color.BLACK);
     		
+    		startAnimation();  // if metronome is disabled, cancels animator
     		
-    		startAnimation();
-    		holoCircularProgressBar.setProgress(0);
+    		if (progressBarAnimator != null) {
+				progressBarAnimator.cancel();
+			}
+    		
+			animate(holoCircularProgressBar, 0, 1000, null);
+			holoCircularProgressBar.setMarkerProgress(0);
     		
     	}
     }
@@ -375,18 +380,7 @@ public class MetronomeActivity extends Activity {
     private float calculateBarProgress() {
 		
     	float barProgress = (Float.parseFloat((String) currentBeat.getText()) / beats);
-    	
-    	//for testing purposes
-    	/*
-    	String a = Float.toString(barProgress);
-    	String b = Short.toString(noteValue);
-    	String c = (String) currentBeat.getText();
-    	
-    	Log.d("notevalue", b);
-    	Log.d("barProgress", a);
-    	Log.d("currentbeat", c);
-    	*/
-    	
+
     	return barProgress;
     }
     
@@ -403,10 +397,10 @@ public class MetronomeActivity extends Activity {
 
 				@Override
 				public void onAnimationEnd(final Animator animation) {
-					if (!animationhasEnded) {
+					if (!animationHasEnded) {
 						animate(holoCircularProgressBar, this);
 					} else {
-						animationhasEnded = false;
+						animationHasEnded = false;
 					}
 				}
 
@@ -420,7 +414,7 @@ public class MetronomeActivity extends Activity {
 
 			});
 		} else {
-			animationhasEnded = true;
+			animationHasEnded = true;
 			progressBarAnimator.cancel();
 		}
 	}
