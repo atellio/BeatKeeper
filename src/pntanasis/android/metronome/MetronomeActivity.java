@@ -160,8 +160,8 @@ public class MetronomeActivity extends Activity {
 				progressBarAnimator.cancel();
 			}
     		
-			animate(holoCircularProgressBar, 0, 1000, null);
-			holoCircularProgressBar.setMarkerProgress(0);
+			animate(holoCircularProgressBar, 0f, 1000, null); // on finish to reset market position?
+			holoCircularProgressBar.setMarkerProgress(0f); // on finish to reset market position? wtf is 0f though?
     		
     	}
     }
@@ -187,7 +187,6 @@ public class MetronomeActivity extends Activity {
 
 		@Override
 		public boolean onLongClick(View v) {
-			// TODO Auto-generated method stub
 			bpm+=20;
 			if(bpm >= maxBpm)
 				bpm = maxBpm;
@@ -221,7 +220,6 @@ public class MetronomeActivity extends Activity {
 
 		@Override
 		public boolean onLongClick(View v) {
-			// TODO Auto-generated method stub
 			bpm-=20;
 			if(bpm <= minBpm)
 				bpm = minBpm;
@@ -240,7 +238,6 @@ public class MetronomeActivity extends Activity {
 		@Override
 		public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
 				long arg3) {
-			// TODO Auto-generated method stub
 			Beats beat = (Beats) arg0.getItemAtPosition(arg2);
 			Log.d("beat value", beat.toString()); // logging beat numerator 
 			TextView timeSignature = (TextView) findViewById(R.id.timesignature);
@@ -263,7 +260,6 @@ public class MetronomeActivity extends Activity {
 		@Override
 		public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
 				long arg3) {
-			// TODO Auto-generated method stub
 			NoteValues noteValue = (NoteValues) arg0.getItemAtPosition(arg2);
 			TextView timeSignature = (TextView) findViewById(R.id.timesignature);
 			timeSignature.setText(""+beats+"/"+noteValue);
@@ -313,6 +309,7 @@ public class MetronomeActivity extends Activity {
     		startStop.setTextColor(Color.BLACK);
     		isStopped = true;
 			metronome = null;
+			currentBeat.setText("1");
 			
 			
 			
@@ -365,7 +362,7 @@ public class MetronomeActivity extends Activity {
 		if (listener != null) {
 			progressBarAnimator.addListener(listener);
 		}
-		progressBarAnimator.reverse();
+		// progressBarAnimator.reverse();
 		progressBarAnimator.addUpdateListener(new AnimatorUpdateListener() {
 
 			@Override
