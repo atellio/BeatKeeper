@@ -291,10 +291,11 @@ public class MetronomeActivity extends Activity {
 
 			metronome.play();
 			
-			
-			
-			return null;			
+			return null;		
+
 		}
+		
+		// implement onProgressUpdate to see if it is more accurate than message for updating UI with currentbeat
 		
 		public void stop() {
 			metronome.stop();
@@ -303,9 +304,6 @@ public class MetronomeActivity extends Activity {
     		isStopped = true;
 			metronome = null;
 			currentBeatFloat = 1;
-			
-			
-			
 		}
 		
 		public void setBpm(short bpm) {
