@@ -49,7 +49,7 @@ public class MetronomeActivity extends Activity {
     private Button plusButton;
     private Button minusButton;
     private Button startStop;
-    private TextView currentBeat;
+    private float currentBeatFloat;
     
     private HoloCircularProgressBar holoCircularProgressBar;
     private ObjectAnimator progressBarAnimator;
@@ -66,17 +66,13 @@ public class MetronomeActivity extends Activity {
 				String message = (String) msg.obj;
 				if (!isStopped) {
 					if (message.equals("1")) {
-						currentBeat.setTextColor(Color.RED);
 						startStop.setTextColor(Color.RED);
-						Log.d("message beat", String.valueOf(message));
 					} else {
-						currentBeat.setTextColor(getResources().getColor(
-								R.color.black));
 						startStop.setTextColor(getResources().getColor(
 								R.color.black));
 					}
-					currentBeat.setText(message);
 					startStop.setText(message);
+					currentBeatFloat = (Float.parseFloat((String) message));
 					
 				}
 			}
@@ -103,9 +99,6 @@ public class MetronomeActivity extends Activity {
         
         minusButton = (Button) findViewById(R.id.minus);
         minusButton.setOnLongClickListener(minusListener);
-        
-        currentBeat = (TextView) findViewById(R.id.currentBeat);
-        currentBeat.setTextColor(Color.RED);
         
         startStop = (Button) findViewById(R.id.startstop);
         
@@ -309,7 +302,7 @@ public class MetronomeActivity extends Activity {
     		startStop.setTextColor(Color.BLACK);
     		isStopped = true;
 			metronome = null;
-			currentBeat.setText("1");
+			currentBeatFloat = 1;
 			
 			
 			
@@ -376,7 +369,7 @@ public class MetronomeActivity extends Activity {
     
     private float calculateBarProgress() {
 		
-    	float barProgress = (Float.parseFloat((String) currentBeat.getText()) / beats);
+    	float barProgress = currentBeatFloat / beats;
 
     	return barProgress;
     }
