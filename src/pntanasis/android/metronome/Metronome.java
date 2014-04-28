@@ -111,4 +111,8 @@ public class Metronome {
 		this.sound = sound2;
 	}
 
+	public int getCurrentBeat() {
+		return currentBeat;
+	}
+
 }

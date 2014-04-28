@@ -33,7 +33,7 @@ import android.widget.TextView;
 public class MetronomeActivity extends Activity {
 	
 	private final short minBpm = 40;
-	private final short maxBpm = 208;
+	private final short maxBpm = 300;
 	
 	private short bpm = 100;
 	private short noteValue = 4;
@@ -49,7 +49,9 @@ public class MetronomeActivity extends Activity {
     private Button plusButton;
     private Button minusButton;
     private Button startStop;
+    private SeekBar bpmSeekBar;
     private float currentBeatFloat;
+    private TextView bpmText;
     
     private HoloCircularProgressBar holoCircularProgressBar;
     private ObjectAnimator progressBarAnimator;
@@ -88,19 +90,16 @@ public class MetronomeActivity extends Activity {
         metroTask = new MetronomeAsyncTask();
         /* Set values and listeners to buttons and stuff */
         
-        TextView bpmText = (TextView) findViewById(R.id.bps);
+        bpmText = (TextView) findViewById(R.id.bps);
         bpmText.setText(""+bpm);
         
         TextView timeSignatureText = (TextView) findViewById(R.id.timesignature);
         timeSignatureText.setText(""+beats+"/"+noteValue);
         
-        plusButton = (Button) findViewById(R.id.plus);
-        plusButton.setOnLongClickListener(plusListener);
-        
-        minusButton = (Button) findViewById(R.id.minus);
-        minusButton.setOnLongClickListener(minusListener);
-        
         startStop = (Button) findViewById(R.id.startstop);
+        
+        bpmSeekBar = (SeekBar) findViewById(R.id.bpmSeekBar);
+        bpmSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
         
         Spinner beatSpinner = (Spinner) findViewById(R.id.beatspinner);
         ArrayAdapter<Beats> arrayBeats =
@@ -153,12 +152,12 @@ public class MetronomeActivity extends Activity {
 				progressBarAnimator.cancel();
 			}
     		
-			animate(holoCircularProgressBar, 0f, 1000, null); // on finish to reset market position?
-			holoCircularProgressBar.setMarkerProgress(0f); // on finish to reset market position? wtf is 0f though?
+			animate(holoCircularProgressBar, 0f, 1000, null); // on finish to reset marker position?
+			holoCircularProgressBar.setMarkerProgress(0f); // on finish to reset marker position? wtf is 0f though?
     		
     	}
     }
-    
+    /*
     private void maxBpmGuard() {
         if(bpm >= maxBpm) {
         	plusButton.setEnabled(false);
@@ -167,31 +166,35 @@ public class MetronomeActivity extends Activity {
         	minusButton.setEnabled(true);
         }    	
     }
+    */
     
-    public void onPlusClick(View view) {
-    	bpm++;
-    	TextView bpmText = (TextView) findViewById(R.id.bps);
-        bpmText.setText(""+bpm);
-        metroTask.setBpm(bpm);
-        maxBpmGuard();
-    }
     
-    private OnLongClickListener plusListener = new OnLongClickListener() {
-
+    private OnSeekBarChangeListener seekBarChangeListener = new OnSeekBarChangeListener() {
+		
 		@Override
-		public boolean onLongClick(View v) {
-			bpm+=20;
-			if(bpm >= maxBpm)
-				bpm = maxBpm;
-	    	TextView bpmText = (TextView) findViewById(R.id.bps);
-	        bpmText.setText(""+bpm);
-	        metroTask.setBpm(bpm);
-	        maxBpmGuard();
-			return true;
+		public void onStopTrackingTouch(SeekBar seekBar) {
+			// TODO Auto-generated method stub
+			
 		}
-    	
-    };
-    
+		
+		@Override
+		public void onStartTrackingTouch(SeekBar seekBar) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		 public void onProgressChanged(SeekBar seekBar, int progress,
+		            boolean fromUser) {
+		    	bpmText = (TextView) findViewById(R.id.bps);
+		        short value = (short) (progress + 40);
+		        bpmText.setText(""+value);
+		        bpm = value;
+		        metroTask.setBpm(value);
+		    }
+	};
+
+	/*
     private void minBpmGuard() {
         if(bpm <= minBpm) {
         	minusButton.setEnabled(false);
@@ -200,32 +203,8 @@ public class MetronomeActivity extends Activity {
         	plusButton.setEnabled(true);
         }    	
     }
-    
-    public void onMinusClick(View view) {
-    	bpm--;
-    	TextView bpmText = (TextView) findViewById(R.id.bps);
-        bpmText.setText(""+bpm);
-        metroTask.setBpm(bpm);
-        minBpmGuard();
-    }
-    
-    private OnLongClickListener minusListener = new OnLongClickListener() {
-
-		@Override
-		public boolean onLongClick(View v) {
-			bpm-=20;
-			if(bpm <= minBpm)
-				bpm = minBpm;
-	    	TextView bpmText = (TextView) findViewById(R.id.bps);
-	        bpmText.setText(""+bpm);
-	        metroTask.setBpm(bpm);
-	        minBpmGuard();
-			return true;
-		}
-    	
-    };
-    
-    
+    */
+	
     private OnItemSelectedListener beatsSpinnerListener = new OnItemSelectedListener() {
 
 		@Override
@@ -274,7 +253,7 @@ public class MetronomeActivity extends Activity {
     	finish();    
     }
     
-    private class MetronomeAsyncTask extends AsyncTask<Void,Void,String> {
+    private class MetronomeAsyncTask extends AsyncTask<Void,Float,String> {
     	Metronome metronome;
     	
     	MetronomeAsyncTask() {
@@ -292,10 +271,9 @@ public class MetronomeActivity extends Activity {
 			metronome.play();
 			
 			return null;		
-
 		}
 		
-		// implement onProgressUpdate to see if it is more accurate than message for updating UI with currentbeat
+
 		
 		public void stop() {
 			metronome.stop();
@@ -303,7 +281,7 @@ public class MetronomeActivity extends Activity {
     		startStop.setTextColor(Color.BLACK);
     		isStopped = true;
 			metronome = null;
-			currentBeatFloat = 1;
+			currentBeatFloat = 1;  // reset the animation position?
 		}
 		
 		public void setBpm(short bpm) {
@@ -320,7 +298,7 @@ public class MetronomeActivity extends Activity {
 
     private void animate(final HoloCircularProgressBar progressBar, final AnimatorListener listener) {
 		final float progress = calculateBarProgress();
-		int duration = 300;
+		int duration = 200;
 		animate(progressBar, progress, duration, listener);
 	}
     
@@ -329,7 +307,7 @@ public class MetronomeActivity extends Activity {
 
 		progressBarAnimator = ObjectAnimator.ofFloat(progressBar, "progress", progress);
 		progressBarAnimator.setDuration(duration);
-
+		
 		progressBarAnimator.addListener(new AnimatorListener() {
 
 			@Override
@@ -344,6 +322,8 @@ public class MetronomeActivity extends Activity {
 
 			@Override
 			public void onAnimationRepeat(final Animator animation) {
+				
+				
 			}
 
 			@Override
@@ -353,7 +333,7 @@ public class MetronomeActivity extends Activity {
 		if (listener != null) {
 			progressBarAnimator.addListener(listener);
 		}
-		// progressBarAnimator.reverse();
+		progressBarAnimator.reverse();
 		progressBarAnimator.addUpdateListener(new AnimatorUpdateListener() {
 
 			@Override
@@ -363,6 +343,8 @@ public class MetronomeActivity extends Activity {
 		});
 		progressBar.setMarkerProgress(progress);
 		progressBarAnimator.start();
+		
+		
 	}
     
     private float calculateBarProgress() {

@@ -1,23 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical" >
 
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:layout_weight="6"
         android:orientation="vertical" >
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal" >
 
             <de.passsy.holocircularprogressbar.HoloCircularProgressBar
                 android:id="@+id/holoCircularProgressBar1"
-                android:layout_width="800dp"
-                android:layout_height="800dp" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <Button
                 android:id="@+id/startstop"
@@ -27,38 +30,38 @@
                 android:background="@android:color/transparent"
                 android:onClick="onStartStopClick"
                 android:text="@string/start"
-                android:textSize="80dp"
-                android:padding="300dp" />
+                android:textSize="80dp" />
         </FrameLayout>
-
-        <TextView
-            android:id="@+id/bps"
-            android:layout_width="wrap_content"
-            android:layout_height="90dp"
-            android:layout_weight="1"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/bps"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/black"
-            android:textSize="30sp" />
-
-        <TextView
-            android:id="@+id/timesignature"
-            android:layout_width="wrap_content"
-            android:layout_height="90dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:text="@string/bps"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/black"
-            android:textSize="30sp" />
-        
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/bps"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:text="@string/bps"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/black"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/timesignature"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="@string/bps"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/black"
+        android:textSize="30sp" />
 
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="bottom"
         android:orientation="vertical" >
 
         <TextView
@@ -67,13 +70,13 @@
             android:layout_height="wrap_content"
             android:text="@string/bps"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-        
-        <SeekBar 
+
+        <SeekBar
             android:id="@+id/bpmSeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            
-            />
+            android:max="260"
+            android:progress="100" />
 
         <Button
             android:id="@+id/minus"
@@ -97,7 +100,8 @@
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="0dp"
+        android:layout_weight="1" >
 
         <TextView
             android:id="@+id/textView2"
