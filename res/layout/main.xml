@@ -8,19 +8,19 @@
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:gravity="center"
         android:layout_weight="6"
         android:orientation="vertical" >
-
+            
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal" >
+            android:layout_height="match_parent">
 
             <de.passsy.holocircularprogressbar.HoloCircularProgressBar
                 android:id="@+id/holoCircularProgressBar1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_gravity="center"
+                 />
 
             <Button
                 android:id="@+id/startstop"
@@ -30,8 +30,9 @@
                 android:background="@android:color/transparent"
                 android:onClick="onStartStopClick"
                 android:text="@string/start"
-                android:textSize="80dp" />
+                android:textSize="80sp" />
         </FrameLayout>
+        
     </LinearLayout>
 
     <TextView
