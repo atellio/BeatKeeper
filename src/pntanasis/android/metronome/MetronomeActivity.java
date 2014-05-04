@@ -127,10 +127,12 @@ public class MetronomeActivity extends Activity {
     
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public synchronized void onStartStopClick(View view) {
-    	String buttonText = startStop.getText().toString();
-    	if(buttonText.equalsIgnoreCase("start")) {
+    	// String buttonText = startStop.getText().toString();
+    	if(isStopped) {
     		// startStop.setText(R.string.stop);
     		isStopped = false;
+    		startStop.setBackgroundResource(Color.TRANSPARENT);
+    		
     		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
     			metroTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[])null);
     			startAnimation();
@@ -140,6 +142,8 @@ public class MetronomeActivity extends Activity {
     			startAnimation();
     		}
     	} else {
+    		isStopped = true;
+    		startStop.setBackgroundResource(R.drawable.ic_play);
     		metroTask.stop();
     		metroTask = new MetronomeAsyncTask();
     		Runtime.getRuntime().gc();
@@ -298,7 +302,7 @@ public class MetronomeActivity extends Activity {
 
     private void animate(final HoloCircularProgressBar progressBar, final AnimatorListener listener) {
 		final float progress = calculateBarProgress();
-		int duration = 200;
+		int duration = 150;
 		animate(progressBar, progress, duration, listener);
 	}
     

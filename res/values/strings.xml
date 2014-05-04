@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Beat Keeper</string>
-    <string name="start">Start</string>
+    <string name="start"></string>
     <string name="stop">Stop</string>
     <color name="yellow">#DEE054</color>
     <string name="plus">+</string>
