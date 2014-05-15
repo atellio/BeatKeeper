@@ -52,9 +52,9 @@ public class Metronome {
 			msg = new Message();
 			msg.obj = ""+currentBeat;
 			if(currentBeat == 1)
-				audioGenerator.writeSound(soundTockArray);
+				audioGenerator.writeSound(soundTickArray);
 			else
-				audioGenerator.writeSound(soundTickArray);				
+				audioGenerator.writeSound(soundTockArray);				
 			if(bpm <= 120)
 				mHandler.sendMessage(msg);
 			audioGenerator.writeSound(silenceSoundArray);

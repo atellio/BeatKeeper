@@ -33,10 +33,7 @@ import android.widget.TextView;
 
 public class MetronomeActivity extends Activity {
 
-	private final short minBpm = 40;
-	private final short maxBpm = 300;
-
-	private short bpm = 100;
+	private short tempo = 100;
 	private short noteValue = 4;
 	private short beats = 4;
 	// private short volume;
@@ -50,8 +47,8 @@ public class MetronomeActivity extends Activity {
 	private ImageButton startStop;
 	private SeekBar bpmSeekBar;
 	private float currentBeatFloat;
-	private TextView bpmText;
-	private TextView beatText;
+	private TextView tempoTextView;
+	private TextView timeSignature;
 
 	private HoloCircularProgressBar holoCircularProgressBar;
 	private ObjectAnimator progressBarAnimator;
@@ -59,6 +56,8 @@ public class MetronomeActivity extends Activity {
 
 	private Handler mHandler;
 
+	
+	// receives current beat from Metronome.java
 	// have in mind that:
 	// http://stackoverflow.com/questions/11407943/this-handler-class-should-be-static-or-leaks-might-occur-incominghandler
 	// in this case we should be fine as no delayed messages are queued
@@ -69,7 +68,7 @@ public class MetronomeActivity extends Activity {
 				String message = (String) msg.obj;
 				if (!isStopped) {
 
-					beatText.setText(message + "/" + noteValue);
+					timeSignature.setText(message + "/" + noteValue);
 					currentBeatFloat = (Float.parseFloat((String) message));
 
 				}
@@ -78,21 +77,18 @@ public class MetronomeActivity extends Activity {
 
 	}
 
-	/** Called when the activity is first created. */
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		metroTask = new MetronomeAsyncTask();
-		/* Set values and listeners to buttons and stuff */
+		
+		tempoTextView = (TextView) findViewById(R.id.tempo);
+		tempoTextView.setText("" + tempo);
 
-		bpmText = (TextView) findViewById(R.id.bps);
-		bpmText.setText("" + bpm);
-
-		beatText = (TextView) findViewById(R.id.beatText);
-
-		TextView timeSignatureText = (TextView) findViewById(R.id.timesignature);
-		timeSignatureText.setText("" + beats + "/" + noteValue);
+		timeSignature = (TextView) findViewById(R.id.timesignature);
+		timeSignature.setText("1" + "/" + noteValue);
 
 		startStop = (ImageButton) findViewById(R.id.startstop);
 
@@ -124,11 +120,9 @@ public class MetronomeActivity extends Activity {
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public synchronized void onStartStopClick(View view) {
-		// String buttonText = startStop.getText().toString();
+
 		if (isStopped) {
-			// startStop.setText(R.string.stop);
 			isStopped = false;
-			// startStop.setBackgroundResource(Color.TRANSPARENT);
 
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 				metroTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
@@ -140,34 +134,24 @@ public class MetronomeActivity extends Activity {
 			}
 		} else {
 			isStopped = true;
-			// startStop.setBackgroundResource(R.drawable.ic_play);
 			metroTask.stop();
 			metroTask = new MetronomeAsyncTask();
 			Runtime.getRuntime().gc();
-			beatText.setText("1" + "/" + noteValue);
+			timeSignature.setText("1" + "/" + noteValue);
 
-			startAnimation(); // if metronome is disabled, cancels animator
+			// if metronome is disabled, cancels animator
+			startAnimation(); 
 
 			if (progressBarAnimator != null) {
 				progressBarAnimator.cancel();
 			}
 
-			animate(holoCircularProgressBar, 0f, 1000, null); // on finish to
-																// reset marker
-																// position?
-			holoCircularProgressBar.setMarkerProgress(0f); // on finish to reset
-															// marker position?
-															// wtf is 0f though?
+			animate(holoCircularProgressBar, 0f, 1000, null); 
+			
+			holoCircularProgressBar.setMarkerProgress(0f); 
 
 		}
 	}
-
-	/*
-	 * private void maxBpmGuard() { if(bpm >= maxBpm) {
-	 * plusButton.setEnabled(false); plusButton.setPressed(false); } else
-	 * if(!minusButton.isEnabled() && bpm>minBpm) {
-	 * minusButton.setEnabled(true); } }
-	 */
 
 	private OnSeekBarChangeListener seekBarChangeListener = new OnSeekBarChangeListener() {
 
@@ -186,20 +170,13 @@ public class MetronomeActivity extends Activity {
 		@Override
 		public void onProgressChanged(SeekBar seekBar, int progress,
 				boolean fromUser) {
-			bpmText = (TextView) findViewById(R.id.bps);
+			tempoTextView = (TextView) findViewById(R.id.tempo);
 			short value = (short) (progress + 40);
-			bpmText.setText("" + value);
-			bpm = value;
+			tempoTextView.setText("" + value);
+			tempo = value;
 			metroTask.setBpm(value);
 		}
 	};
-
-	/*
-	 * private void minBpmGuard() { if(bpm <= minBpm) {
-	 * minusButton.setEnabled(false); minusButton.setPressed(false); } else
-	 * if(!plusButton.isEnabled() && bpm<maxBpm) { plusButton.setEnabled(true);
-	 * } }
-	 */
 
 	private OnItemSelectedListener beatsSpinnerListener = new OnItemSelectedListener() {
 
@@ -261,7 +238,7 @@ public class MetronomeActivity extends Activity {
 		protected String doInBackground(Void... params) {
 			metronome.setBeat(beats);
 			metronome.setNoteValue(noteValue);
-			metronome.setBpm(bpm);
+			metronome.setBpm(tempo);
 			metronome.setBeatSound(beatSound);
 			metronome.setSound(sound);
 
@@ -274,7 +251,7 @@ public class MetronomeActivity extends Activity {
 			metronome.stop();
 			isStopped = true;
 			metronome = null;
-			currentBeatFloat = 1; // reset the animation position?
+			currentBeatFloat = 1; 
 		}
 
 		public void setBpm(short bpm) {

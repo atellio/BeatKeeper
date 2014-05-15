@@ -32,7 +32,7 @@
                 android:src="@drawable/ic_play" />
 
             <TextView
-                android:id="@+id/beatText"
+                android:id="@+id/timesignature"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/startstop"
@@ -40,28 +40,17 @@
                 android:textSize="30sp" />
 
             <TextView
-                android:id="@+id/bps"
+                android:id="@+id/tempo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/timesignature"
                 android:layout_centerInParent="true"
-                android:layout_below="@id/beatText"
-                android:text="@string/bps"
                 android:textColor="@color/black"
                 android:textSize="20sp" />
         </RelativeLayout>
-        
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/timesignature"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center_vertical|center_horizontal"
-        android:text="@string/bps"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/black"
-        android:textSize="30sp" />
+    
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -72,10 +61,11 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/tempoTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/bps"
+            android:layout_marginLeft="10dp"
+            android:text="@string/tempoTitle"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <SeekBar
@@ -84,37 +74,21 @@
             android:layout_height="wrap_content"
             android:max="260"
             android:progress="100" />
-
-        <Button
-            android:id="@+id/minus"
-            android:layout_width="0px"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onMinusClick"
-            android:text="@string/minus"
-            android:textSize="30sp" />
-
-        <Button
-            android:id="@+id/plus"
-            android:layout_width="0px"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onPlusClick"
-            android:text="@string/plus"
-            android:textSize="30sp" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" >
+        android:layout_weight="1"
+        android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/timeSignatureTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/timesignature"
+            android:layout_marginLeft="10dp"
+            android:text="@string/timeSignatureTitle"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Spinner
