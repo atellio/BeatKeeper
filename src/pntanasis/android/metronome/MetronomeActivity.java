@@ -36,7 +36,6 @@ public class MetronomeActivity extends Activity {
 	private short tempo = 100;
 	private short noteValue = 4;
 	private short beats = 4;
-	// private short volume;
 	private short initialVolume;
 	private double beatSound = 2440;
 	private double sound = 6440;
@@ -46,6 +45,7 @@ public class MetronomeActivity extends Activity {
 
 	private ImageButton startStop;
 	private SeekBar bpmSeekBar;
+	private SeekBar timeSignatureSeekBar;
 	private float currentBeatFloat;
 	private TextView tempoTextView;
 	private TextView timeSignature;
@@ -56,7 +56,6 @@ public class MetronomeActivity extends Activity {
 
 	private Handler mHandler;
 
-	
 	// receives current beat from Metronome.java
 	// have in mind that:
 	// http://stackoverflow.com/questions/11407943/this-handler-class-should-be-static-or-leaks-might-occur-incominghandler
@@ -77,7 +76,6 @@ public class MetronomeActivity extends Activity {
 
 	}
 
-	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -93,22 +91,10 @@ public class MetronomeActivity extends Activity {
 		startStop = (ImageButton) findViewById(R.id.startstop);
 
 		bpmSeekBar = (SeekBar) findViewById(R.id.bpmSeekBar);
-		bpmSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
-
-		Spinner beatSpinner = (Spinner) findViewById(R.id.beatspinner);
-		ArrayAdapter<Beats> arrayBeats = new ArrayAdapter<Beats>(this,
-				android.R.layout.simple_spinner_item, Beats.values());
-		beatSpinner.setAdapter(arrayBeats);
-		beatSpinner.setSelection(Beats.four.ordinal());
-		arrayBeats.setDropDownViewResource(R.layout.spinner_dropdown);
-		beatSpinner.setOnItemSelectedListener(beatsSpinnerListener);
-
-		Spinner noteValuesdSpinner = (Spinner) findViewById(R.id.notespinner);
-		ArrayAdapter<NoteValues> noteValues = new ArrayAdapter<NoteValues>(
-				this, android.R.layout.simple_spinner_item, NoteValues.values());
-		noteValuesdSpinner.setAdapter(noteValues);
-		noteValues.setDropDownViewResource(R.layout.spinner_dropdown);
-		noteValuesdSpinner.setOnItemSelectedListener(noteValueSpinnerListener);
+		bpmSeekBar.setOnSeekBarChangeListener(tempoSeekBarChangeListener);
+		
+		timeSignatureSeekBar = (SeekBar) findViewById(R.id.timeSignatureSeekBar);
+		timeSignatureSeekBar.setOnSeekBarChangeListener(beatSeekBarChangeListener);
 
 		holoCircularProgressBar = (HoloCircularProgressBar) findViewById(R.id.holoCircularProgressBar1);
 
@@ -118,6 +104,7 @@ public class MetronomeActivity extends Activity {
 				.getStreamVolume(AudioManager.STREAM_MUSIC);
 	}
 
+	// When the play/pause button is pressed, start or stop the metronome
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public synchronized void onStartStopClick(View view) {
 
@@ -127,10 +114,10 @@ public class MetronomeActivity extends Activity {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 				metroTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
 						(Void[]) null);
-				startAnimation();
+				startOrStopAnimation();
 			} else {
 				metroTask.execute();
-				startAnimation();
+				startOrStopAnimation();
 			}
 		} else {
 			isStopped = true;
@@ -140,7 +127,7 @@ public class MetronomeActivity extends Activity {
 			timeSignature.setText("1" + "/" + noteValue);
 
 			// if metronome is disabled, cancels animator
-			startAnimation(); 
+			startOrStopAnimation(); 
 
 			if (progressBarAnimator != null) {
 				progressBarAnimator.cancel();
@@ -149,57 +136,64 @@ public class MetronomeActivity extends Activity {
 			animate(holoCircularProgressBar, 0f, 1000, null); 
 			
 			holoCircularProgressBar.setMarkerProgress(0f); 
-
 		}
 	}
 
-	private OnSeekBarChangeListener seekBarChangeListener = new OnSeekBarChangeListener() {
+	// seekbar defines tempo (beats per minute)
+	private OnSeekBarChangeListener tempoSeekBarChangeListener = new OnSeekBarChangeListener() {
 
 		@Override
 		public void onStopTrackingTouch(SeekBar seekBar) {
 			// TODO Auto-generated method stub
-
 		}
 
 		@Override
 		public void onStartTrackingTouch(SeekBar seekBar) {
 			// TODO Auto-generated method stub
-
 		}
 
 		@Override
 		public void onProgressChanged(SeekBar seekBar, int progress,
 				boolean fromUser) {
+			
+			// tempo text positioned inside holo circular progress bar
 			tempoTextView = (TextView) findViewById(R.id.tempo);
+			// the "+ 40" is to ensure that the bpm doesn't go below 40bpm.
 			short value = (short) (progress + 40);
 			tempoTextView.setText("" + value);
 			tempo = value;
+			// set bpm value to the metronome async task
 			metroTask.setBpm(value);
 		}
 	};
 
-	private OnItemSelectedListener beatsSpinnerListener = new OnItemSelectedListener() {
+	// choose time signature numerator (e.g. 3/4, 4/4, etc)
+	private OnSeekBarChangeListener beatSeekBarChangeListener = new OnSeekBarChangeListener() {
 
 		@Override
-		public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
-				long arg3) {
-			Beats beat = (Beats) arg0.getItemAtPosition(arg2);
-			Log.d("beat value", beat.toString()); // logging beat numerator
-			TextView timeSignature = (TextView) findViewById(R.id.timesignature);
-			timeSignature.setText("" + beat + "/" + noteValue);
-			metroTask.setBeat(beat.getNum());
-			beats = beat.getNum();
-			Log.d("metroTask beat", String.valueOf(beat.getNum()));
-		}
-
-		@Override
-		public void onNothingSelected(AdapterView<?> arg0) {
+		public void onStartTrackingTouch(SeekBar seekBar) {
 			// TODO Auto-generated method stub
-
 		}
 
+		@Override
+		public void onStopTrackingTouch(SeekBar seekBar) {
+			// TODO Auto-generated method stub
+		}
+		
+		@Override
+		public void onProgressChanged(SeekBar seekBar, int progress,
+				boolean fromUser) {
+			Log.d("beat value", Integer.toString(progress)); // logging beat numerator
+			TextView timeSignature = (TextView) findViewById(R.id.timesignature);
+			timeSignature.setText("" + Integer.toString(progress) + "/" + noteValue);
+			metroTask.setBeat(progress);
+			beats = (short) progress;
+			Log.d("metroTask beat", Integer.toString(progress));
+		}
 	};
 
+	// for implementing option for denominator. 
+	/*
 	private OnItemSelectedListener noteValueSpinnerListener = new OnItemSelectedListener() {
 
 		@Override
@@ -213,11 +207,10 @@ public class MetronomeActivity extends Activity {
 		@Override
 		public void onNothingSelected(AdapterView<?> arg0) {
 			// TODO Auto-generated method stub
-
 		}
-
 	};
-
+	*/
+	
 	public void onBackPressed() {
 		metroTask.stop();
 		// metroTask = new MetronomeAsyncTask();
@@ -269,7 +262,7 @@ public class MetronomeActivity extends Activity {
 	private void animate(final HoloCircularProgressBar progressBar,
 			final AnimatorListener listener) {
 		final float progress = calculateBarProgress();
-		int duration = 150;
+		int duration = 100; // speed of animation
 		animate(progressBar, progress, duration, listener);
 	}
 
@@ -325,7 +318,7 @@ public class MetronomeActivity extends Activity {
 		return barProgress;
 	}
 
-	private void startAnimation() {
+	private void startOrStopAnimation() {
 
 		if (!isStopped) {
 			animate(holoCircularProgressBar, new AnimatorListener() {
@@ -358,5 +351,4 @@ public class MetronomeActivity extends Activity {
 			progressBarAnimator.cancel();
 		}
 	}
-
 }
