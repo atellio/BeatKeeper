@@ -133,7 +133,7 @@ public class MetronomeActivity extends Activity {
 				progressBarAnimator.cancel();
 			}
 
-			animate(holoCircularProgressBar, 0f, 1000, null); 
+			animate(holoCircularProgressBar, 0f, (tempo * 10), null); 
 			
 			holoCircularProgressBar.setMarkerProgress(0f); 
 		}
