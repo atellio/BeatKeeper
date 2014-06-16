@@ -1,4 +1,4 @@
-package pntanasis.android.metronome;
+package com.bedsheetapps.tempometronome;
 
 public enum Beats{
 	one("1"),

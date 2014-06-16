@@ -4,7 +4,7 @@
  * which came from here:
  * http://marblemice.blogspot.com/2010/04/generate-and-play-tone-in-android.html
  */
-package pntanasis.android.metronome;
+package com.bedsheetapps.tempometronome;
 
 import android.media.AudioFormat;
 import android.media.AudioManager;

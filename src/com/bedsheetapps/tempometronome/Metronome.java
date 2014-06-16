@@ -1,4 +1,4 @@
-package pntanasis.android.metronome;
+package com.bedsheetapps.tempometronome;
 
 import android.os.Handler;
 import android.os.Message;

@@ -1,5 +1,6 @@
-package pntanasis.android.metronome;
+package com.bedsheetapps.tempometronome;
 
+import com.bedsheetapps.tempometronome.R;
 import de.passsy.holocircularprogressbar.HoloCircularProgressBar;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
